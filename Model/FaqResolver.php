@@ -1,15 +1,15 @@
 <?php
-
-
 namespace Darvishani\FaqGraphQl\Model;
 
 use GraphQL\Type\Definition\ResolveInfo;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
 use Magento\Framework\GraphQl\Query\Resolver\Value;
-use \Mageprince\Faq\Model\ResourceModel\Faq\Collection ;
+use Mageprince\Faq\Model\ResourceModel\Faq\Collection ;
 use Darvishani\FaqGraphQl\Model\Filter;
 use Darvishani\FaqGraphQl\Model\Sort;
+use Magento\Cms\Model\Template\FilterProvider;
+
 class FaqResolver  implements \Magento\Framework\GraphQl\Query\ResolverInterface
 {
     private $_collection;
@@ -18,11 +18,21 @@ class FaqResolver  implements \Magento\Framework\GraphQl\Query\ResolverInterface
 
     private $_sort;
 
-    public function __construct(Collection $collection,Filter $filter,Sort $sort)
-    {
+    /**
+     * @var FilterProvider
+     */
+    private $filterProvider;
+
+    public function __construct(
+        Collection $collection,
+        Filter $filter,
+        Sort $sort,
+        FilterProvider $filterProvider
+    ) {
         $this->_collection=$collection;
         $this->_filter=$filter;
         $this->_sort=$sort;
+        $this->filterProvider = $filterProvider;
     }
     /**
     * @param \Magento\Framework\GraphQl\Config\Element\Field $field
@@ -63,7 +73,9 @@ class FaqResolver  implements \Magento\Framework\GraphQl\Query\ResolverInterface
        }
 
        foreach ($faqCollection as $item){
-            $result[]=$item->getData();
+           $data = $item->getData();
+           $data['content'] = $this->filterProvider->getPageFilter()->filter($data['content']);
+           $result[] = $data;
        }
 
        return $result;
