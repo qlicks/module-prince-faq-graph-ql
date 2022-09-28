@@ -1,6 +1,6 @@
 {
   "name": "darvishani/module-faq-graph-ql",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "faq graph GL based on prince faq ",
   "type": "magento2-module",
   "require": {
