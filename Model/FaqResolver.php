@@ -50,34 +50,30 @@ class FaqResolver  implements \Magento\Framework\GraphQl\Query\ResolverInterface
         array $value = null,
         array $args = null
     ){
-//        if(isset($args['type'])){
-//            if(!in_array($args['type'],$this->productType)){
-//                throw new GraphQlInputException(__('Invalid type. it shoulde be %1',implode(" or ",$this->productType)));
-//            }
-//        }
-       $result=[];
-       $faqCollection=$this->_collection;
+        $result=[];
+        $faqCollection=$this->_collection;
+        $faqCollection->addFieldToFilter('status', 1);
 
-       if(isset($args['currentPage'])){
-           $faqCollection->setCurPage($args['currentPage']);
-       }
-       if(isset($args['pageSize'])){
-           $faqCollection->setPageSize($args['pageSize']);
-       }
-       if(isset($args['filter'])){
-           $faqCollection=$this->_filter->applyFilter($faqCollection,$args['filter']);
-       }
+        if(isset($args['currentPage'])){
+            $faqCollection->setCurPage($args['currentPage']);
+        }
+        if(isset($args['pageSize'])){
+            $faqCollection->setPageSize($args['pageSize']);
+        }
+        if(isset($args['filter'])){
+            $faqCollection=$this->_filter->applyFilter($faqCollection,$args['filter']);
+        }
 
-       if(isset($args['sort'])){
-           $faqCollection=$this->_sort->applySort($faqCollection,$args['sort']);
-       }
+        if(isset($args['sort'])){
+            $faqCollection=$this->_sort->applySort($faqCollection,$args['sort']);
+        }
 
-       foreach ($faqCollection as $item){
+        foreach ($faqCollection as $item){
            $data = $item->getData();
            $data['content'] = $this->filterProvider->getPageFilter()->filter($data['content']);
            $result[] = $data;
-       }
+        }
 
-       return $result;
+        return $result;
     }
 }
